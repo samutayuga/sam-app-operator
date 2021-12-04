@@ -1,0 +1,14 @@
+apiVersion: solution.feature.aero.sample.com/v1alpha1
+kind: Backend
+metadata:
+  name: backend-sample
+spec:
+  # Add fields here
+  backendApps:
+    - image: samutup/xvnc-sample
+      version: 1.0.0
+      port: 5900
+      name: xvnc-sample
+      parameters:
+        SESSION_NAMESPACE_PREFIX: session
+        ASSEMBLIES_CONFIG: /app/session-manager/config/assemblies.yaml

@@ -1,0 +1,69 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "capability-operator.fullname" . }}-manager-role
+  labels:
+    {{ include "capability-operator.labels" . | nindent 4 }}
+    {{- with .Values.serviceAccount.annotations }}
+    annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+rules:
+  ##
+  ## Base operator rules
+  ##
+  # We need to get namespaces so the operator can read namespaces to ensure they exist
+  - apiGroups:
+      - ""
+    resources:
+      - namespaces
+    verbs:
+      - get
+  # We need to manage Helm release secrets
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+    verbs:
+      - "*"
+  # We need to create events on CRs about things happening during reconciliation
+  - apiGroups:
+      - ""
+    resources:
+      - events
+    verbs:
+      - create
+
+  ##
+  ## Rules for spike.task/v1alpha1, Kind: Nginx
+  ##
+  - apiGroups:
+      - {{ .Values.legacy.group }}
+    resources:
+      - {{ .Values.legacy.plural }}
+      - {{ .Values.legacy.plural }}/status
+      - {{ .Values.legacy.plural }}/finalizers
+
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - verbs:
+      - "*"
+    apiGroups:
+      - {{ .Values.legacy.group }}
+    resources:
+      - "{{ .Values.legacy.plural }}"
+  - verbs:
+      - "*"
+    apiGroups:
+      - ""
+    resources:
+      - "configmaps"
+      - "serviceaccounts"
+
+  #+kubebuilder:scaffold:rules

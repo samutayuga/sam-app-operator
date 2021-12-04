@@ -1,0 +1,24 @@
+# permissions for end users to edit backends.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: backend-editor-role
+rules:
+  - apiGroups:
+      - solution.feature.aero.sample.com
+    resources:
+      - backends
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - solution.feature.aero.sample.com
+    resources:
+      - backends/status
+    verbs:
+      - get

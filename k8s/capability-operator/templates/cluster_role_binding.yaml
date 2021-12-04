@@ -1,0 +1,18 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "capability-operator.fullname" . }}-manager-rolebinding
+  labels:
+    {{ include "capability-operator.labels" . | nindent 4 }}
+    {{- with .Values.serviceAccount.annotations }}
+    annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "capability-operator.fullname" . }}-manager-role
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "capability-operator.serviceAccountName" . }}-op-svc-acc
+    namespace: {{ .Values.namespace }}
